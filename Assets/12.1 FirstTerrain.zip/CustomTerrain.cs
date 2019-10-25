@@ -34,13 +34,22 @@ public class CustomTerrain : MonoBehaviour {
         public float mPerlinHeightScale = 0.09f;
         public int mPerlinOffsetX = 0;
         public int mPerlinOffsetY = 0;
-        public bool remove = false;
+        public bool remove = false; 
     }
 
     public List<PerlinParameters> perlinParameters = new List<PerlinParameters>()
     {
         new PerlinParameters()
     };
+
+    //VORONOI
+    public float voronoiFallOff = 0.2f;
+    public float voronoiDropOff = 0.6f;
+    public float voronoiMinHeight = 0.1f;
+    public float voronoiMaxHeight = 0.5f;
+    public int voronoiPeaks = 5;
+    public enum VoronoiType { Linear = 0, Power = 1, SinPow = 2, Combined = 3 }
+    public VoronoiType voronoiType = VoronoiType.Linear;
 
 
     public Terrain terrain;
@@ -58,6 +67,71 @@ public class CustomTerrain : MonoBehaviour {
                              terrainData.heightmapHeight];
             
     }
+
+    public void Voronoi()
+    {
+        float[,] heightMap = GetHeightMap();
+
+        for (int p = 0; p < voronoiPeaks; p++)
+        {
+            Vector3 peak = new Vector3(UnityEngine.Random.Range(0, terrainData.heightmapWidth),
+                                       UnityEngine.Random.Range(voronoiMinHeight, voronoiMaxHeight),
+                                       UnityEngine.Random.Range(0, terrainData.heightmapHeight)
+                                      );
+
+            if (heightMap[(int)peak.x, (int)peak.z] < peak.y)
+                heightMap[(int)peak.x, (int)peak.z] = peak.y;
+            else
+                continue;
+
+            Vector2 peakLocation = new Vector2(peak.x, peak.z);
+            float maxDistance = Vector2.Distance(new Vector2(0, 0), new Vector2(terrainData.heightmapWidth,
+                                                                              terrainData.heightmapHeight));
+            for (int y = 0; y < terrainData.heightmapHeight; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapWidth; x++)
+                {
+                    if (!(x == peak.x && y == peak.z))
+                    {
+                        float distanceToPeak = Vector2.Distance(peakLocation, new Vector2(x, y)) / maxDistance;
+                        float h;
+
+                        if (voronoiType == VoronoiType.Combined)
+                        {
+                            h = peak.y - distanceToPeak * voronoiFallOff -
+                                Mathf.Pow(distanceToPeak, voronoiDropOff); //combined
+                        }
+                        else if (voronoiType == VoronoiType.Power)
+                        {
+                            h = peak.y - Mathf.Pow(distanceToPeak, voronoiDropOff) * voronoiFallOff; //power
+                        }
+                        else if (voronoiType == VoronoiType.SinPow)
+                        {
+                            h = peak.y - Mathf.Pow(distanceToPeak*3, voronoiFallOff) -
+                                    Mathf.Sin(distanceToPeak*2*Mathf.PI)/voronoiDropOff; //sinpow
+                        }
+                        else
+                        {
+                            h = peak.y - distanceToPeak * voronoiFallOff; //linear
+                        }
+
+                        if(heightMap[x,y] < h)
+                            heightMap[x, y] = h;
+                    }
+
+                }
+            }
+        }
+        terrainData.SetHeights(0, 0, heightMap);
+
+    }
+
+
+    //interesting results
+    //distanceToPeak = 0.5f + Mathf.Sin(distanceToPeak * Mathf.PI*0.1f)*10.0f;
+    //float h = peak.y - Mathf.Log(distanceToPeak * 6 + 1) * fallOff;
+
+
 
     public void Perlin()
     {
@@ -186,7 +260,7 @@ public class CustomTerrain : MonoBehaviour {
 
         //take this object
         this.gameObject.tag = "Terrain";
-    } 
+    }
 
     void AddTag(SerializedProperty tagsProp, string newTag)
     {
