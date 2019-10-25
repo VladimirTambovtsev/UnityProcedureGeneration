@@ -120,7 +120,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &776371492
+--- !u!1 &645482365
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -128,10 +128,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 776371496}
-  - component: {fileID: 776371495}
-  - component: {fileID: 776371494}
-  - component: {fileID: 776371493}
+  - component: {fileID: 645482369}
+  - component: {fileID: 645482368}
+  - component: {fileID: 645482367}
+  - component: {fileID: 645482366}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Terrain
@@ -139,13 +139,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
---- !u!114 &776371493
+--- !u!114 &645482366
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776371492}
+  m_GameObject: {fileID: 645482365}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43bed8a81a94d4ab9a35f650917281ed, type: 3}
@@ -155,13 +155,13 @@ MonoBehaviour:
   heightMapImage: {fileID: 0}
   heightMapScale: {x: 1, y: 1, z: 1}
   resetTerrain: 1
-  perlinXScale: 0.01
-  perlinYScale: 0.01
-  perlinOffsetX: 0
-  perlinOffsetY: 0
-  perlinOctaves: 3
+  perlinXScale: 0.02
+  perlinYScale: 0.02
+  perlinOffsetX: 3009
+  perlinOffsetY: 1239
+  perlinOctaves: 1
   perlinPersistance: 8
-  perlinHeightScale: 0.09
+  perlinHeightScale: 0.117
   perlinParameters:
   - mPerlinXScale: 0.01
     mPerlinYScale: 0.01
@@ -171,40 +171,48 @@ MonoBehaviour:
     mPerlinOffsetX: 0
     mPerlinOffsetY: 0
     remove: 0
-  voronoiFallOff: 0.2
-  voronoiDropOff: 0.6
-  voronoiMinHeight: 0.1
-  voronoiMaxHeight: 0.5
-  voronoiPeaks: 5
+  - mPerlinXScale: 0.01
+    mPerlinYScale: 0.01
+    mPerlinOctaves: 3
+    mPerlinPersistance: 8
+    mPerlinHeightScale: 0.09
+    mPerlinOffsetX: 0
+    mPerlinOffsetY: 0
+    remove: 0
+  voronoiFallOff: 5.31
+  voronoiDropOff: 3.98
+  voronoiMinHeight: 0.352
+  voronoiMaxHeight: 0.48
+  voronoiPeaks: 6
   voronoiType: 0
   MPDheightMin: -2
   MPDheightMax: 2
   MPDheightDampenerPower: 2
   MPDroughness: 2
   smoothAmount: 2
-  terrain: {fileID: 776371495}
-  terrainData: {fileID: 15600000, guid: 6cfcb13b997ef4f82be3b8b32c1e4be6, type: 2}
---- !u!154 &776371494
+  terrain: {fileID: 645482368}
+  terrainData: {fileID: 15600000, guid: f5a252cd0610149079767b813594b237, type: 2}
+--- !u!154 &645482367
 TerrainCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776371492}
+  m_GameObject: {fileID: 645482365}
   m_Material: {fileID: 0}
   m_Enabled: 1
-  m_TerrainData: {fileID: 15600000, guid: 6cfcb13b997ef4f82be3b8b32c1e4be6, type: 2}
+  m_TerrainData: {fileID: 15600000, guid: f5a252cd0610149079767b813594b237, type: 2}
   m_EnableTreeColliders: 1
---- !u!218 &776371495
+--- !u!218 &645482368
 Terrain:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776371492}
+  m_GameObject: {fileID: 645482365}
   m_Enabled: 1
   serializedVersion: 5
-  m_TerrainData: {fileID: 15600000, guid: 6cfcb13b997ef4f82be3b8b32c1e4be6, type: 2}
+  m_TerrainData: {fileID: 15600000, guid: f5a252cd0610149079767b813594b237, type: 2}
   m_TreeDistance: 5000
   m_TreeBillboardDistance: 50
   m_TreeCrossFadeLength: 5
@@ -227,13 +235,13 @@ Terrain:
   m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
   m_GroupingID: 0
   m_AllowAutoConnect: 1
---- !u!4 &776371496
+--- !u!4 &645482369
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776371492}
+  m_GameObject: {fileID: 645482365}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}

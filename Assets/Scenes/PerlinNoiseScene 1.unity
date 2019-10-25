@@ -171,6 +171,19 @@ MonoBehaviour:
     mPerlinOffsetX: 0
     mPerlinOffsetY: 0
     remove: 0
+  splatHeights:
+  - texture: {fileID: 0}
+    minHeight: 0.1
+    maxHeight: 0.2
+    minSlope: 0
+    maxSlope: 1.5
+    tileOffset: {x: 0, y: 0}
+    tileSize: {x: 50, y: 50}
+    splatOffset: 0.1
+    splatNoiseXScale: 0.01
+    splatNoiseYScale: 0.01
+    splatNoiseScaler: 0.1
+    remove: 0
   voronoiFallOff: 0.2
   voronoiDropOff: 0.6
   voronoiMinHeight: 0.1
