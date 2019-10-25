@@ -12,10 +12,33 @@ public class CustomTerrain : MonoBehaviour {
     public Texture2D heightMapImage;
     public Vector3 heightMapScale = new Vector3(1, 1, 1);
 
+    // Perlin Noise
+    public float perlinXScale = 0.01f;
+    public float perlinYScale = 0.01f;
+    public float perlinOffsetX = 0;
+    public float perlinOffsetY = 0;
+    
 
     public Terrain terrain;
     public TerrainData terrainData;
 
+    public void Perlin()
+    {
+        float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, 
+                                                                        terrainData.heightmapHeight);
+
+        for (int x = 0; x < terrainData.heightmapHeight; x++)
+        {
+            for (int y = 0; y < terrainData.heightmapWidth; y++)
+            {
+                heightMap[x, y] = Mathf.PerlinNoise((perlinOffsetX + x) * perlinXScale, 
+                                                    (perlinOffsetY + y) * perlinYScale);
+            }
+        }
+        
+        terrainData.SetHeights(0, 0, heightMap);
+    }
+    
     public void RandomTerrain()
     {
         float[,] heightMap = terrainData.GetHeights(0, 0, terrainData.heightmapWidth, 
