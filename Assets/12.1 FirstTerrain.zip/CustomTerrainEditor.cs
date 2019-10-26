@@ -48,6 +48,12 @@ public class CustomTerrainEditor : Editor
     SerializedProperty maxTrees;
     SerializedProperty treeSpacing;
 
+    GUITableState detailMapTable;
+    SerializedProperty detail;
+    SerializedProperty maxDetails;
+    SerializedProperty detailSpacing;
+
+
     //fold outs ------------
     bool showRandom = false;
     bool showLoadHeights = false;
@@ -58,11 +64,12 @@ public class CustomTerrainEditor : Editor
     bool showSmooth = false;
     bool showSplatMaps = false;
     bool showVeg = false;
-    bool showHeights = false;
+    bool showHeightMap = false;
+    bool showDetail = false;
 
     Texture2D hmTexture;
 
-    void OnEnable()
+    void OnEnable() //
     {
         randomHeightRange = serializedObject.FindProperty("randomHeightRange");
         heightMapScale = serializedObject.FindProperty("heightMapScale");
@@ -96,6 +103,11 @@ public class CustomTerrainEditor : Editor
         treeSpacing = serializedObject.FindProperty("treeSpacing");
 
         hmTexture = new Texture2D(513, 513, TextureFormat.ARGB32, false);
+
+        detailMapTable = new GUITableState("detailMapTable");
+        detail = serializedObject.FindProperty("details");
+        maxDetails = serializedObject.FindProperty("maxDetails");
+        detailSpacing = serializedObject.FindProperty("detailSpacing");
     }
     Vector2 scrollPos;
     public override void OnInspectorGUI()
@@ -204,7 +216,7 @@ public class CustomTerrainEditor : Editor
             EditorGUILayout.PropertyField(MPDroughness);
             if (GUILayout.Button("MPD"))
             {
-                terrain.MidPointDisplacement();
+                terrain.MidpointDisplacement();
             }
         }
 
@@ -237,31 +249,54 @@ public class CustomTerrainEditor : Editor
         }
 
         showVeg = EditorGUILayout.Foldout(showVeg, "Vegetation");
-        if (showVeg)
-        {
+        if (showVeg) {
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             GUILayout.Label("Vegetation", EditorStyles.boldLabel);
             EditorGUILayout.IntSlider(maxTrees, 0, 10000, new GUIContent("Maximum Trees"));
             EditorGUILayout.IntSlider(treeSpacing, 2, 20, new GUIContent("Trees Spacing"));
             vegMapTable = GUITableLayout.DrawTable(vegMapTable,
-                                        serializedObject.FindProperty("vegetation"));
+                serializedObject.FindProperty("vegetation"));
             GUILayout.Space(20);
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("+"))
-            {
-                terrain.AddNewVegetation();
+            if (GUILayout.Button("+")) {
+                terrain.AddNewVegetaion();
             }
-            if (GUILayout.Button("-"))
-            {
-                terrain.RemoveVegetation();
+            if (GUILayout.Button("-")) {
+                terrain.RemoveVegetaion();
             }
             EditorGUILayout.EndHorizontal();
-            if (GUILayout.Button("Apply Vegetation"))
-            {
-                terrain.PlantVegetation();
+            if (GUILayout.Button("Apply Vegetation")) {
+                terrain.PlantVegetaion();
             }
         }
 
+        showDetail = EditorGUILayout.Foldout(showDetail, "Details");
+        if (showDetail) {
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUILayout.Label("Detail", EditorStyles.boldLabel);
+            EditorGUILayout.IntSlider(maxDetails, 0, 10000, new GUIContent("Maximum Details"));
+            EditorGUILayout.IntSlider(detailSpacing, 1, 20, new GUIContent("Detail Spacing"));
+            detailMapTable = GUITableLayout.DrawTable(detailMapTable,
+                serializedObject.FindProperty("details"));
+
+            terrain.GetComponent<Terrain>().detailObjectDistance = maxDetails.intValue;
+
+            GUILayout.Space(20);
+
+            EditorGUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("+")) {
+                terrain.AddNewDetails();
+            }
+            if (GUILayout.Button("-")) {
+                terrain.RemoveDetails();
+            }
+
+            EditorGUILayout.EndHorizontal();
+            if (GUILayout.Button("Apply Details")) {
+                terrain.AddDetails();
+            }
+        }
 
         showSmooth = EditorGUILayout.Foldout(showSmooth, "Smooth Terrain");
         if(showSmooth)
@@ -269,7 +304,7 @@ public class CustomTerrainEditor : Editor
             EditorGUILayout.IntSlider(smoothAmount, 1, 10, new GUIContent("smoothAmount"));
             if (GUILayout.Button("Smooth"))
             {
-                terrain.Smooth();
+                terrain.SmoothTerrain();
             }
 
         }
@@ -280,10 +315,9 @@ public class CustomTerrainEditor : Editor
             terrain.ResetTerrain();
         }
 
-        //Display Height Map
-        showHeights = EditorGUILayout.Foldout(showHeights, "Height Map");
-        if (showHeights)
-        {
+        // Display Height Map
+        showHeightMap = EditorGUILayout.Foldout(showHeightMap, "Height Map");
+        if (showHeightMap) {
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             int hmtSize = (int)(EditorGUIUtility.currentViewWidth - 100);
@@ -292,25 +326,26 @@ public class CustomTerrainEditor : Editor
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Refresh", GUILayout.Width(hmtSize)))
-            {
-                float[,] heightMap = terrain.terrainData.GetHeights(0, 0, 
-                                                                    terrain.terrainData.heightmapWidth, 
-                                                                    terrain.terrainData.heightmapHeight);
-                for (int y = 0; y < terrain.terrainData.alphamapHeight; y++)
-                {
-                    for (int x = 0; x < terrain.terrainData.alphamapWidth; x++)
-                    {
-                        hmTexture.SetPixel(x, y, new Color(heightMap[x, y], 
-                                                           heightMap[x, y], 
-                                                           heightMap[x, y], 1));
+            if (GUILayout.Button("Refresh", GUILayout.Width(hmtSize))) {
+                float[,] heightMap = terrain.terrainData.GetHeights(0, 0,
+                    terrain.terrainData.heightmapWidth,
+                    terrain.terrainData.heightmapHeight);
+
+
+                for (int y = 0; y < terrain.terrainData.heightmapHeight; ++y) {
+                    for (int x = 0; x < terrain.terrainData.heightmapWidth; ++x) {
+                        hmTexture.SetPixel(x, y, new Color( heightMap[x, y],
+                                                            heightMap[x, y],
+                                                            heightMap[x, y], 1));
                     }
                 }
                 hmTexture.Apply();
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+
         }
+
         //Scrollbar ending code
         EditorGUILayout.EndScrollView();
         EditorGUILayout.EndVertical();
